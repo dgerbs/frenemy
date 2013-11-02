@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>List</title>
+  </head>
+  <body>
+    <button id="add-frenemy">Add Frenemy</button>
+    <ul id="frenemy-list"></ul>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery//jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
+    <script>
+      (function ($) {
+
+        Frenemy = Backbone.Model.extend({
+          // Create a model for the Frenemy attribute
+          name: null
+        });
+
+        Frenemies = Backbone.Collection.extend({
+          // This is the Frenemy collection to hold Friend models
+          initialize: function (models, options) {
+            this.bind("add", options.view.addFrenemyLi);
+            // Listens for new adds to the collections and calls a view function when executed
+          }
+        });
+
+        AppView = Backbone.View.extend({
+          el: $("body"),
+          initialize: function () {
+            this.frenemies = new Frenemies( null, { view: this });
+            // Create a frenemies collection when view is initialized.
+            // Pass a reference to the view to hook
+          },
+          events: {
+            "click #add-frenemy": "showPrompt",
+          },
+          showPrompt: function () {
+            var frenemy_name = prompt("Who is your frenemy?");
+            var frenemy_model = new Frenemy({ name: frenemy_name });
+            // Add a new frenemy model to the frenemy collection
+            this.frenemies.add( frenemy_model );
+          },
+          addFrenemyLi: function (model) {
+            // Parameter passed is a reference to the model that was added
+            $("#frenemy-list").append("<li>" + model.get('name') + "</li>");
+            // Using .get to receive attributes of the model
+          }
+        });
+
+        var appview = new AppView;
+      })(jQuery);
+  </body>
+</html>
